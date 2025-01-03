@@ -12,6 +12,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
+  "types-requests",
   "pylint",
   "black",
   "mypy",

@@ -19,7 +19,7 @@ format:
 
 lint:
 	@$(ACTIVATE) && pylint cdm_client/
-	@$(ACTIVATE) && mypy --install-types cdm_client/
+	@$(ACTIVATE) && mypy cdm_client/
 
 .PHONY: build
 build:
