@@ -11,7 +11,7 @@ clean:
 
 virtualenv: .venv
 
-reqs:
+reqs: virtualenv
 	$(ACTIVATE) && pip install .[dev]
 
 format:
