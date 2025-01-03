@@ -25,7 +25,7 @@ class CDMClient:
     def _update_status(self) -> None:
         data = {"data": self._transmission_adapter.get_status()}
         resp = requests.post(
-            f"{self._config['host']}/api/client/status/",
+            f"{self._config['server_host']}/api/client/status/",
             json=data,
             headers={"x-api-key": self._config["api_key"]},
             timeout=5,
@@ -34,14 +34,14 @@ class CDMClient:
 
     def _download_files(self) -> None:
         resp = requests.get(
-            f"{self._config['host']}/api/client/", headers={"x-api-key": self._config["api_key"]}, timeout=5
+            f"{self._config['server_host']}/api/client/", headers={"x-api-key": self._config["api_key"]}, timeout=5
         )
         resp.raise_for_status()
 
         files = resp.json()["data"]["files"]
         for torrent_id, path in files.items():
             resp = requests.get(
-                f"{self._config['host']}/api/client/download/{torrent_id}/",
+                f"{self._config['server_host']}/api/client/download/{torrent_id}/",
                 headers={"x-api-key": self._config["api_key"]},
                 stream=True,
                 timeout=5,
