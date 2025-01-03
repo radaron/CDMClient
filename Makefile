@@ -1,5 +1,5 @@
 VIRTUALENV = .venv
-ACTIVATE = source $(VIRTUALENV)/bin/activate
+ACTIVATE = . $(VIRTUALENV)/bin/activate
 
 
 .venv:
