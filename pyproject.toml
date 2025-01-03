@@ -1,0 +1,40 @@
+[project]
+name = "CDMClient"
+version = "0.1.0"
+description = "CDMClient"
+authors = [{name = "Aron Radics", email = "radics.aron.jozsef@gmail.com"}]
+requires-python = ">=3.9"
+dependencies = [
+  "requests",
+  "transmission_rpc",
+  "cryptography",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pylint",
+  "black",
+  "mypy",
+]
+
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["cdm_client"]
+
+[project.scripts]
+cdm-client = "cdm_client.cdm_client:main"
+
+[tool.pylint]
+disable = ["missing-docstring", "too-few-public-methods"]
+max-line-length = 120
+
+[tool.mypy]
+disallow_untyped_calls = true
+disallow_incomplete_defs = true
+disallow_untyped_defs = true
+
+[tool.black]
+line-length = 120
