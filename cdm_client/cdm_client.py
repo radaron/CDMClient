@@ -56,9 +56,9 @@ class CDMClient:
             try:
                 self._update_status()
                 self._download_files()
-                sleep(30)
             except Exception:  # pylint: disable=broad-except
                 self._logger.exception("An error occurred.")
+            sleep(30)
 
 
 def main() -> None:
