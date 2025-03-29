@@ -25,8 +25,8 @@ To set up CDMClient as a systemd service, execute the following commands:
    [Service]
    User=${USER}
    Type=simple
-   Environment="LC_ALL=C.UTF-8"
-   Environment="LANG=C.UTF-8"
+   Environment=LC_ALL=C.UTF-8
+   Environment=LANG=C.UTF-8
    ExecStart=${HOME}/.local/bin/cdm-client
    Restart=on-failure
    RestartSec=3
