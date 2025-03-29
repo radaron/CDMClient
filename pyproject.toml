@@ -1,6 +1,6 @@
 [project]
 name = "CDMClient"
-version = "0.1.4"
+version = "0.1.5"
 description = "CDMClient"
 authors = [{name = "Aron Radics", email = "radics.aron.jozsef@gmail.com"}]
 requires-python = ">=3.9"
@@ -14,6 +14,11 @@ dependencies = [
   "transmission_rpc",
   "cryptography",
 ]
+
+[project.urls]
+Homepage = "https://github.com/radaron/CDMClient"
+Repository = "https://github.com/radaron/CDMClient"
+
 
 [project.optional-dependencies]
 dev = [
