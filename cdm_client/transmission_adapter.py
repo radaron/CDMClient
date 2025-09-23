@@ -29,3 +29,12 @@ class TransmissionAdapter:
 
     def add_torrent(self, torrent: bytes, download_dir: str) -> None:
         self._client.add_torrent(torrent, download_dir=download_dir)
+
+    def pause_torrent(self, torrent_id: int) -> None:
+        self._client.stop_torrent(ids=[torrent_id])
+
+    def resume_torrent(self, torrent_id: int) -> None:
+        self._client.start_torrent(ids=[torrent_id])
+
+    def remove_torrent(self, torrent_id: int) -> None:
+        self._client.remove_torrent(ids=[torrent_id], delete_data=True)
