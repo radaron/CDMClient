@@ -39,7 +39,7 @@ class CDMClient:
         )
         resp.raise_for_status()
 
-    def _download_files(self, files: list) -> None:
+    def _download_files(self, files: dict[int, str]) -> None:
         for torrent_id, path in files.items():
             resp = requests.get(
                 f"{self._config['server_host']}/api/client/download/{torrent_id}/",
@@ -51,7 +51,7 @@ class CDMClient:
             self._transmission_adapter.add_torrent(resp.content, download_dir=path)
             self._logger.info("Downloading torrent: %s to %s", torrent_id, path)
 
-    def _execute_instructions(self, instructions: list) -> None:
+    def _execute_instructions(self, instructions: list[dict]) -> None:
         for instruction in instructions:
             self._logger.info("Received instruction: %s", instruction)
             for action, params in instruction.items():
