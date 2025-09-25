@@ -29,11 +29,15 @@ class CDMClient:
         logger.setLevel(logging.INFO)
         return logger
 
-    def _update_status(self) -> None:
-        data = {"data": self._transmission_adapter.get_status()}
+    def _get_status_for_deletion(self, torrent_id: int) -> list[dict]:
+        status = self._transmission_adapter.get_status_by_id(torrent_id)
+        status["is_deleted"] = True
+        return [status]
+
+    def _update_status(self, status_data: list[dict]) -> None:
         resp = requests.post(
             f"{self._config['server_host']}/api/client/status/",
-            json=data,
+            json={"data": status_data},
             headers={"x-api-key": self._config["api_key"]},
             timeout=5,
         )
@@ -57,13 +61,15 @@ class CDMClient:
             for action, params in instruction.items():
                 if action == InstructionAction.STOP.value:
                     self._transmission_adapter.pause_torrent(params["torrent_id"])
-                    self._logger.info("Stop torrent: %s", params["torrent_id"])
+                    self._logger.info("Stopped torrent: %s", params["torrent_id"])
                 elif action == InstructionAction.START.value:
                     self._transmission_adapter.resume_torrent(params["torrent_id"])
-                    self._logger.info("Start torrent: %s", params["torrent_id"])
+                    self._logger.info("Started torrent: %s", params["torrent_id"])
                 elif action == InstructionAction.DELETE.value:
+                    status_data = self._get_status_for_deletion(params["torrent_id"])
                     self._transmission_adapter.remove_torrent(params["torrent_id"])
-                    self._logger.info("Remove torrent and data: %s", params["torrent_id"])
+                    self._update_status(status_data)
+                    self._logger.info("Removed torrent and data: %s", params["torrent_id"])
                 else:
                     self._logger.warning("Unknown instruction action: %s", action)
 
@@ -79,13 +85,13 @@ class CDMClient:
         instructions = resp.json()["data"]["instructions"]
         if instructions:
             self._execute_instructions(instructions)
-            self._update_status()
+            self._update_status(self._transmission_adapter.get_status())
 
     def run(self) -> None:
         self._logger.info("Starting cdm-client...")
         while True:
             try:
-                self._update_status()
+                self._update_status(self._transmission_adapter.get_status())
                 self._get_order()
             except Exception:  # pylint: disable=broad-except
                 self._logger.exception("An error occurred.")
@@ -95,3 +101,7 @@ class CDMClient:
 def main() -> None:
     cdm_client = CDMClient()
     cdm_client.run()
+
+
+if __name__ == "__main__":
+    main()
