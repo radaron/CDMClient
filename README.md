@@ -42,6 +42,16 @@ To set up CDMClient as a systemd service, execute the following commands:
    sudo systemctl start cdm-client.service
    ```
 
+### Add automatic update (optional)
+To keep CDMClient updated automatically, you can add a cron job. Run:
+```shell
+crontab -e
+```
+Then add the following line to the crontab file:
+```shell
+0 3 * * * /usr/bin/python3 -m pip install --upgrade CDMClient --user && systemctl restart cdm-client.service
+```
+
 ## Configuration
 The configuration file is located at:
 ```~/.config/cdm_client/config.ini```
