@@ -1,11 +1,11 @@
-import os
 import configparser
+import os
 from typing import Union
+
 from cryptography.fernet import Fernet
 
 
 class Config:
-
     CONFIG_FOLDER_PATH = os.path.join(os.path.expanduser("~"), ".config", "cdm_client")
     KEY_PATH = os.path.join(CONFIG_FOLDER_PATH, "key.key")
     CONFIG_PATH = os.path.join(CONFIG_FOLDER_PATH, "config.ini")
@@ -79,7 +79,9 @@ class Config:
                 return self._decrypt(self._config["connection"][name])
             except Exception:  # pylint: disable=broad-except
                 raw_value = self._config["connection"][name]
-                self._config["connection"][name] = self._encrypt(self._config["connection"][name])
+                self._config["connection"][name] = self._encrypt(
+                    self._config["connection"][name]
+                )
                 self._write_creds()
                 return raw_value
         return self._config["connection"][name]

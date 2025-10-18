@@ -1,29 +1,27 @@
-VIRTUALENV = .venv
-ACTIVATE = . $(VIRTUALENV)/bin/activate
-
-
-.venv:
-	python3.9 -m venv $(VIRTUALENV)
-	$(ACTIVATE) && pip install --upgrade pip pip-tools
-
-clean:
-	rm -rf $(VIRTUALENV)
-
-virtualenv: .venv
-
-reqs: virtualenv
-	$(ACTIVATE) && pip install .[dev]
+reqs:
+	uv sync --dev
 
 format:
-	$(ACTIVATE) && black cdm_client/
+	uv run ruff format cdm_client/
+	uv run ruff check --select I --fix cdm_client/
 
 lint:
-	@$(ACTIVATE) && pylint cdm_client/
-	@$(ACTIVATE) && mypy cdm_client/
+	uv run ruff check cdm_client/
+	uv run ty check cdm_client/
+
+reqs-ci:
+	uv sync --dev --locked
+
+check-format:
+	uv run ruff format --check cdm_client/
+	uv run ruff check --select I cdm_client/
 
 .PHONY: build
 build:
-	@$(ACTIVATE) && python -m build
+	uv build
 
 publish:
-	@$(ACTIVATE) && python -m twine upload --skip-existing dist/*
+	uv publish
+
+bump-version:
+	uv version --bump $(filter-out $@,$(MAKECMDGOALS))

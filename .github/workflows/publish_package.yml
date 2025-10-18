@@ -11,21 +11,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.9'
+        python-version-file: ".python-version"
+    - name: Install uv
+      uses: astral-sh/setup-uv@v6
     - name: Install dependencies
       run: |
-        make reqs
+        make reqs-ci
     - name: Lint code
       run: |
         make lint
+    - name: Check code format
+      run: |
+        make check-format
     - name: Build and publish python package
       run: |
         make build
         make publish
       env:
-        TWINE_USERNAME: __token__
-        TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+        UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}

@@ -1,11 +1,13 @@
 import logging
+from enum import Enum
 from logging.handlers import SysLogHandler
 from time import sleep
-from enum import Enum
+
 import requests
 
 from cdm_client.config import Config
 from cdm_client.transmission_adapter import TransmissionAdapter
+
 
 class InstructionAction(Enum):
     STOP = "stop"
@@ -23,7 +25,9 @@ class CDMClient:
 
     def _init_logger(self) -> logging.Logger:
         syslog = SysLogHandler(address="/dev/log")
-        syslog.setFormatter(logging.Formatter("cdm-client %(name)s: %(levelname)s %(message)s"))
+        syslog.setFormatter(
+            logging.Formatter("cdm-client %(name)s: %(levelname)s %(message)s")
+        )
         logger = logging.getLogger("cdm-client")
         logger.addHandler(syslog)
         logger.setLevel(logging.INFO)
@@ -69,13 +73,17 @@ class CDMClient:
                     status_data = self._get_status_for_deletion(params["torrent_id"])
                     self._transmission_adapter.remove_torrent(params["torrent_id"])
                     self._update_status(status_data)
-                    self._logger.info("Removed torrent and data: %s", params["torrent_id"])
+                    self._logger.info(
+                        "Removed torrent and data: %s", params["torrent_id"]
+                    )
                 else:
                     self._logger.warning("Unknown instruction action: %s", action)
 
     def _get_order(self) -> None:
         resp = requests.get(
-            f"{self._config['server_host']}/api/client/", headers={"x-api-key": self._config["api_key"]}, timeout=5
+            f"{self._config['server_host']}/api/client/",
+            headers={"x-api-key": self._config["api_key"]},
+            timeout=5,
         )
         resp.raise_for_status()
 

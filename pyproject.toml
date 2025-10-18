@@ -1,6 +1,6 @@
 [project]
 name = "CDMClient"
-version = "0.3.0"
+version = "0.3.1"
 description = "CDMClient"
 authors = [{name = "Aron Radics", email = "radics.aron.jozsef@gmail.com"}]
 requires-python = ">=3.9"
@@ -19,34 +19,8 @@ dependencies = [
 Homepage = "https://github.com/radaron/CDMClient"
 Repository = "https://github.com/radaron/CDMClient"
 
-
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
-  "types-requests",
-  "twine",
-  "pylint",
-  "black",
-  "mypy",
+    "ruff>=0.14.1",
+    "ty>=0.0.1a23",
 ]
-
-[build-system]
-requires = ["setuptools>=42", "wheel"]
-build-backend = "setuptools.build_meta"
-
-[tool.setuptools]
-packages = ["cdm_client"]
-
-[project.scripts]
-cdm-client = "cdm_client.cdm_client:main"
-
-[tool.pylint]
-disable = ["missing-docstring", "too-few-public-methods"]
-max-line-length = 120
-
-[tool.mypy]
-disallow_untyped_calls = true
-disallow_incomplete_defs = true
-disallow_untyped_defs = true
-
-[tool.black]
-line-length = 120

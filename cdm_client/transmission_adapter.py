@@ -1,11 +1,15 @@
 import logging
 from typing import Optional
+
 from transmission_rpc import Client, Torrent
 
 
 class TransmissionAdapter:
-    def __init__(self, username: Optional[str] = None, password: Optional[str] = None) -> None:
+    def __init__(
+        self, username: Optional[str] = None, password: Optional[str] = None
+    ) -> None:
         self._client = Client(username=username, password=password)
+        self._client.set_session(rename_partial_files=False, sequential_download=True)
         self._logger = logging.getLogger("cdm-client")
 
     def _get_status_dict(self, torrent: Torrent) -> dict:
