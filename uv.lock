@@ -8,8 +8,8 @@ resolution-markers = [
 
 [[package]]
 name = "cdmclient"
-version = "0.3.1"
-source = { virtual = "." }
+version = "0.3.2"
+source = { editable = "." }
 dependencies = [
     { name = "cryptography" },
     { name = "requests" },
