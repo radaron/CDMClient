@@ -13,11 +13,14 @@ class Config:
         "connection": {
             "server_host": "",
             "api_key": "",
-            "rpc_user": "",
-            "rpc_password": "",
+            "client_host": "",
+            "client_port": "",
+            "client_username": "",
+            "client_password": "",
+            "client_type": "",
         }
     }
-    ENCRYPTED_CONFIG = ["rpc_password"]
+    ENCRYPTED_CONFIG = ["rpc_password", "password"]
 
     def __init__(self) -> None:
         self._key: Union[bytes, str] = ""

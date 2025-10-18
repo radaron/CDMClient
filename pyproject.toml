@@ -1,6 +1,6 @@
 [project]
 name = "CDMClient"
-version = "0.3.2"
+version = "1.0.0"
 description = "CDMClient"
 authors = [{name = "Aron Radics", email = "radics.aron.jozsef@gmail.com"}]
 requires-python = ">=3.9"
@@ -13,6 +13,8 @@ dependencies = [
   "requests",
   "transmission_rpc",
   "cryptography",
+  "sqlalchemy>=2.0.0",
+  "qbittorrent-api>=2025.7.0",
 ]
 
 [project.urls]
@@ -21,9 +23,15 @@ Repository = "https://github.com/radaron/CDMClient"
 
 [dependency-groups]
 dev = [
+    "mypy>=1.18.2",
     "ruff>=0.14.1",
-    "ty>=0.0.1a23",
+    "types-requests>=2.32.4.20250913",
 ]
+
+[tool.mypy]
+disallow_untyped_calls = true
+disallow_incomplete_defs = true
+disallow_untyped_defs = true
 
 [tool.uv]
 package = true

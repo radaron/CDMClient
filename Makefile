@@ -7,7 +7,7 @@ format:
 
 lint:
 	uv run ruff check cdm_client/
-	uv run ty check cdm_client/
+	uv run mypy cdm_client/
 
 reqs-ci:
 	uv sync --dev --locked
