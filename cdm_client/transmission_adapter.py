@@ -17,6 +17,7 @@ class TransmissionAdapter(TorrentClientAdapterBase):
         self._client = Client(
             username=username, password=password, host=host, port=port
         )
+        # The sequential download setting is not working somehow :(
         self._client.set_session(rename_partial_files=False, sequential_download=True)
         self._logger = logging.getLogger("cdm-client")
 

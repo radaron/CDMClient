@@ -1,6 +1,6 @@
 [project]
 name = "CDMClient"
-version = "1.0.0"
+version = "1.0.1"
 description = "CDMClient"
 authors = [{name = "Aron Radics", email = "radics.aron.jozsef@gmail.com"}]
 requires-python = ">=3.9"

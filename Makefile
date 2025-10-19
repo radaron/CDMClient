@@ -23,5 +23,5 @@ build:
 publish:
 	uv publish
 
-bump-version:
+bump:
 	uv version --bump $(filter-out $@,$(MAKECMDGOALS))
