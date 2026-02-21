@@ -44,3 +44,4 @@ package = true
 
 [project.scripts]
 cdm-client = "cdm_client.cdm_client:main"
+cdm-migrate = "cdm_client.migrate_torrents:main"

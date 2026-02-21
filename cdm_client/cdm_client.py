@@ -167,7 +167,7 @@ class CDMClient:
             try:
                 self._update_status(self._get_download_status())
                 self._get_order()
-            except Exception:  # pylint: disable=broad-except
+            except Exception:
                 self._logger.exception("An error occurred.")
             sleep(5)
 
