@@ -1,5 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Optional, Protocol
+
+
+class TorrentRef(Protocol):
+    @property
+    def id(self) -> int: ...
 
 
 class TorrentClientAdapterBase(ABC):
@@ -13,7 +18,9 @@ class TorrentClientAdapterBase(ABC):
     def get_status_by_id(self, torrent_id: int) -> dict: ...
 
     @abstractmethod
-    def add_torrent(self, torrent: bytes, download_dir: str) -> Any: ...
+    def add_torrent(
+        self, torrent: bytes, download_dir: str
+    ) -> Optional[TorrentRef]: ...
 
     @abstractmethod
     def pause_torrent(self, torrent_id: int) -> None: ...

@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, Optional
+from typing import Optional, TypedDict
 
 from cdm_client.qbittorrent_adapter import QBitTorrentAdapter
 from cdm_client.torrent_client_adapter_base import TorrentClientAdapterBase
@@ -18,9 +18,29 @@ class TorrentClientType(Enum):
         return cls.TRANSMISSION
 
 
-def _filter_none(**kwargs: Any) -> dict:
-    """Filter out None values from kwargs."""
-    return {k: v for k, v in kwargs.items() if v is not None}
+class AdapterKwargs(TypedDict, total=False):
+    username: str
+    password: str
+    host: str
+    port: int
+
+
+def _filter_none(
+    username: Optional[str] = None,
+    password: Optional[str] = None,
+    host: Optional[str] = None,
+    port: Optional[int] = None,
+) -> AdapterKwargs:
+    kwargs: AdapterKwargs = {}
+    if username is not None:
+        kwargs["username"] = username
+    if password is not None:
+        kwargs["password"] = password
+    if host is not None:
+        kwargs["host"] = host
+    if port is not None:
+        kwargs["port"] = port
+    return kwargs
 
 
 def create_torrent_client_adapter(
