@@ -10,7 +10,7 @@ import requests
 
 from cdm_client.config import Config
 from cdm_client.database_adapter import DatabaseAdapter
-from cdm_client.torent_client_factory import (
+from cdm_client.torrent_client_factory import (
     TorrentClientType,
     create_torrent_client_adapter,
 )
@@ -68,6 +68,11 @@ class CDMClient:
             new_torrent = self._torrent_client_adapter.add_torrent(
                 resp.content, download_dir=path
             )
+            if new_torrent is None:
+                self._logger.error(
+                    "Failed to add torrent for tracker_id=%s to %s", tracker_id, path
+                )
+                continue
             with self._database_adapter as db_adapter:
                 status = db_adapter.create_or_update_download_torrent_mapping(
                     tracker_id=tracker_id, torrent_id=new_torrent.id
@@ -162,7 +167,7 @@ class CDMClient:
             try:
                 self._update_status(self._get_download_status())
                 self._get_order()
-            except Exception:  # pylint: disable=broad-except
+            except Exception:
                 self._logger.exception("An error occurred.")
             sleep(5)
 

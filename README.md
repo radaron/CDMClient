@@ -81,3 +81,21 @@ To monitor the service logs, use the following command:
 ```shell
 journalctl -fu cdm-client
 ```
+
+## Torrent Migration
+You can migrate torrents between Transmission and qBittorrent with:
+```shell
+cdm-migrate --source-type transmission --target-type qbittorrent \
+  --source-host 127.0.0.1 --source-port 9091 --source-username user --source-password pass \
+  --target-host 127.0.0.1 --target-port 8080 --target-username admin --target-password adminadmin
+```
+
+### Recommended first run (dry-run)
+```shell
+cdm-migrate --source-type transmission --target-type qbittorrent --dry-run
+```
+
+### Reverse direction (qBittorrent -> Transmission)
+```shell
+cdm-migrate --source-type qbittorrent --target-type transmission
+```

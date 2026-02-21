@@ -80,7 +80,7 @@ class Config:
         if name in self.ENCRYPTED_CONFIG:
             try:
                 return self._decrypt(self._config["connection"][name])
-            except Exception:  # pylint: disable=broad-except
+            except Exception:
                 raw_value = self._config["connection"][name]
                 self._config["connection"][name] = self._encrypt(
                     self._config["connection"][name]

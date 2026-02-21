@@ -15,7 +15,7 @@ from sqlalchemy.orm import sessionmaker
 Base = declarative_base()
 
 
-class DownloadTorrentMapping(Base):  # type: ignore[valid-type,misc]
+class DownloadTorrentMapping(Base):
     __tablename__ = "download_torrent_mapping"
 
     tracker_id: int = Column(Integer, primary_key=True)  # type: ignore[assignment]
