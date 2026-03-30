@@ -1,6 +1,6 @@
 [project]
 name = "CDMClient"
-version = "1.0.2"
+version = "1.0.3"
 description = "CDMClient"
 authors = [{name = "Aron Radics", email = "radics.aron.jozsef@gmail.com"}]
 requires-python = ">=3.9"
@@ -44,4 +44,3 @@ package = true
 
 [project.scripts]
 cdm-client = "cdm_client.cdm_client:main"
-cdm-migrate = "cdm_client.migrate_torrents:main"
