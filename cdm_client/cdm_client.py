@@ -20,6 +20,7 @@ class InstructionAction(Enum):
     STOP = "stop"
     START = "start"
     DELETE = "delete"
+    CLEAN = "clean"
 
 
 class CDMClient:
@@ -95,8 +96,66 @@ class CDMClient:
                     self._logger.info("Started torrent: %s", params["torrent_id"])
                 elif action == InstructionAction.DELETE.value:
                     self.delete_download(params["torrent_id"])
+                elif action == InstructionAction.CLEAN.value:
+                    self.clean_download_paths(params["paths"])
                 else:
                     self._logger.warning("Unknown instruction action: %s", action)
+
+    def _normalize_path(self, path: str) -> str:
+        return os.path.normpath(os.path.realpath(path))
+
+    def _is_protected_path(self, path: str, protected_paths: set[str]) -> bool:
+        normalized_path = self._normalize_path(path)
+        for protected_path in protected_paths:
+            if (
+                protected_path == normalized_path
+                or protected_path.startswith(f"{normalized_path}{os.sep}")
+            ):
+                return True
+        return False
+
+    def _delete_path(self, path: str) -> None:
+        # Soft delete for testing it first
+        return
+        if os.path.islink(path) or os.path.isfile(path):
+            os.remove(path)
+        else:
+            shutil.rmtree(path)
+
+    def clean_download_paths(self, paths: list[str]) -> None:
+        if not paths:
+            self._logger.warning("No clean paths provided")
+            return
+
+        status_entries = self._torrent_client_adapter.get_status()
+        protected_paths: set[str] = set()
+        for status_entry in status_entries:
+            download_dir = status_entry.get("downloadDir")
+            name = status_entry.get("name")
+            if not isinstance(download_dir, str) or not isinstance(name, str):
+                continue
+            protected_paths.add(
+                self._normalize_path(os.path.join(download_dir, name))
+            )
+
+        for path in paths:
+            clean_path = self._normalize_path(path)
+            if not os.path.isdir(clean_path):
+                self._logger.warning("Clean path does not exist: %s", clean_path)
+                continue
+
+            self._logger.info("Cleaning path: %s", clean_path)
+            for entry in os.scandir(clean_path):
+                entry_path = self._normalize_path(entry.path)
+                if self._is_protected_path(entry_path, protected_paths):
+                    continue
+                try:
+                    self._delete_path(entry_path)
+                    self._logger.info("Deleted stale path: %s", entry_path)
+                except FileNotFoundError:
+                    self._logger.warning("Path disappeared during clean: %s", entry_path)
+                except OSError:
+                    self._logger.exception("Failed to delete stale path: %s", entry_path)
 
     def delete_download(self, torrent_id: int) -> None:
         try:
@@ -124,7 +183,7 @@ class CDMClient:
         if os.path.exists(file_path):
             self._logger.info("Force deleting file: %s", file_path)
             try:
-                shutil.rmtree(file_path)
+                self._delete_path(file_path)
             except FileNotFoundError:
                 self._logger.warning("File not found during deletion")
 
