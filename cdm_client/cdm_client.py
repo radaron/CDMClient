@@ -115,8 +115,6 @@ class CDMClient:
         return False
 
     def _delete_path(self, path: str) -> None:
-        # Soft delete for testing it first
-        return
         if os.path.islink(path) or os.path.isfile(path):
             os.remove(path)
         else:
