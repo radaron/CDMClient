@@ -20,7 +20,7 @@ class Config:
             "client_type": "",
         }
     }
-    ENCRYPTED_CONFIG = ["rpc_password", "password"]
+    ENCRYPTED_CONFIG = ["client_password"]
 
     def __init__(self) -> None:
         self._key: Union[bytes, str] = ""
