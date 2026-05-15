@@ -76,7 +76,10 @@ class CDMClient:
                 continue
             with self._database_adapter as db_adapter:
                 status = db_adapter.create_or_update_download_torrent_mapping(
-                    tracker_id=tracker_id, torrent_id=new_torrent.id
+                    tracker_id=tracker_id,
+                    torrent_hash=self._torrent_client_adapter.get_status_by_id(
+                        new_torrent.id
+                    )["hash"],
                 )
                 if not status:
                     self._logger.error(
@@ -107,9 +110,8 @@ class CDMClient:
     def _is_protected_path(self, path: str, protected_paths: set[str]) -> bool:
         normalized_path = self._normalize_path(path)
         for protected_path in protected_paths:
-            if (
-                protected_path == normalized_path
-                or protected_path.startswith(f"{normalized_path}{os.sep}")
+            if protected_path == normalized_path or protected_path.startswith(
+                f"{normalized_path}{os.sep}"
             ):
                 return True
         return False
@@ -132,9 +134,7 @@ class CDMClient:
             name = status_entry.get("name")
             if not isinstance(download_dir, str) or not isinstance(name, str):
                 continue
-            protected_paths.add(
-                self._normalize_path(os.path.join(download_dir, name))
-            )
+            protected_paths.add(self._normalize_path(os.path.join(download_dir, name)))
 
         for path in paths:
             clean_path = self._normalize_path(path)
@@ -151,9 +151,13 @@ class CDMClient:
                     self._delete_path(entry_path)
                     self._logger.info("Deleted stale path: %s", entry_path)
                 except FileNotFoundError:
-                    self._logger.warning("Path disappeared during clean: %s", entry_path)
+                    self._logger.warning(
+                        "Path disappeared during clean: %s", entry_path
+                    )
                 except OSError:
-                    self._logger.exception("Failed to delete stale path: %s", entry_path)
+                    self._logger.exception(
+                        "Failed to delete stale path: %s", entry_path
+                    )
 
     def delete_download(self, torrent_id: int) -> None:
         try:
@@ -167,7 +171,9 @@ class CDMClient:
             )
         finally:
             with self._database_adapter as db_adapter:
-                deleted_mapping = db_adapter.delete_mapping(torrent_id=torrent_id)
+                deleted_mapping = db_adapter.delete_mapping(
+                    torrent_hash=status_data[0]["hash"]
+                )
             self._update_status(status_data)
 
         self._logger.info(
@@ -211,7 +217,9 @@ class CDMClient:
             status = self._torrent_client_adapter.get_status()
         with self._database_adapter as db_adapter:
             for status_entry in status:
-                tracker_id = db_adapter.get_tracker_id_by_torrent_id(status_entry["id"])
+                tracker_id = db_adapter.get_tracker_id_by_torrent_hash(
+                    status_entry["hash"]
+                )
                 if tracker_id:
                     status_entry["tracker_id"] = tracker_id
                 if for_deletion:

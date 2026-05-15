@@ -63,6 +63,7 @@ class QBitTorrentAdapter(TorrentClientAdapterBase):
     def _get_status_dict(self, torrent: TorrentDictionary) -> dict:
         return {
             "id": self._hash_to_id(torrent.hash),
+            "hash": torrent.hash,
             "name": torrent.name,
             "status": self._map_status(torrent.state),
             "progress": int(torrent.progress * 100),

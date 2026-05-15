@@ -5,6 +5,7 @@ from typing import Optional
 from sqlalchemy import (
     Column,
     Integer,
+    String,
     UniqueConstraint,
     create_engine,
 )
@@ -19,10 +20,10 @@ class DownloadTorrentMapping(Base):
     __tablename__ = "download_torrent_mapping"
 
     tracker_id: int = Column(Integer, primary_key=True)  # type: ignore[assignment]
-    torrent_id: int = Column(Integer, nullable=False)  # type: ignore[assignment]
+    torrent_hash: str = Column(String(40), nullable=False, unique=True)  # type: ignore[assignment]
 
     __table_args__ = (
-        UniqueConstraint("tracker_id", "torrent_id", name="unique_download_torrent"),
+        UniqueConstraint("tracker_id", "torrent_hash", name="unique_download_torrent"),
     )
 
 
@@ -51,13 +52,13 @@ class DatabaseAdapter:
         self.session.close()
 
     def create_or_update_download_torrent_mapping(
-        self, tracker_id: int, torrent_id: int
+        self, tracker_id: int, torrent_hash: str
     ) -> bool:
-        if self.get_torrent_id_by_tracker_id(tracker_id):
-            return self.update_torrent_id(tracker_id, torrent_id)
+        if self.get_torrent_hash_by_tracker_id(tracker_id):
+            return self.update_torrent_hash(tracker_id, torrent_hash)
         try:
             mapping = DownloadTorrentMapping(
-                tracker_id=tracker_id, torrent_id=torrent_id
+                tracker_id=tracker_id, torrent_hash=torrent_hash
             )
             self.session.add(mapping)
             self.session.commit()
@@ -69,15 +70,15 @@ class DatabaseAdapter:
             self.session.rollback()
             return False
 
-    def get_torrent_id_by_tracker_id(self, tracker_id: int) -> Optional[int]:
+    def get_torrent_hash_by_tracker_id(self, tracker_id: int) -> Optional[str]:
         mapping = (
             self.session.query(DownloadTorrentMapping)
             .filter_by(tracker_id=tracker_id)
             .first()
         )
-        return mapping.torrent_id if mapping else None
+        return mapping.torrent_hash if mapping else None
 
-    def update_torrent_id(self, tracker_id: int, new_torrent_id: int) -> bool:
+    def update_torrent_hash(self, tracker_id: int, new_torrent_hash: str) -> bool:
         mapping = (
             self.session.query(DownloadTorrentMapping)
             .filter_by(tracker_id=tracker_id)
@@ -85,23 +86,23 @@ class DatabaseAdapter:
         )
 
         if mapping:
-            mapping.torrent_id = new_torrent_id
+            mapping.torrent_hash = new_torrent_hash
             self.session.commit()
             return True
         return False
 
-    def get_tracker_id_by_torrent_id(self, torrent_id: int) -> Optional[int]:
+    def get_tracker_id_by_torrent_hash(self, torrent_hash: str) -> Optional[int]:
         mapping = (
             self.session.query(DownloadTorrentMapping)
-            .filter_by(torrent_id=torrent_id)
+            .filter_by(torrent_hash=torrent_hash)
             .first()
         )
         return mapping.tracker_id if mapping else None
 
-    def delete_mapping(self, torrent_id: int) -> bool:
+    def delete_mapping(self, torrent_hash: str) -> bool:
         mapping = (
             self.session.query(DownloadTorrentMapping)
-            .filter_by(torrent_id=torrent_id)
+            .filter_by(torrent_hash=torrent_hash)
             .first()
         )
 
